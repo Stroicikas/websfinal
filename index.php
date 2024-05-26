@@ -4,80 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <title>Document</title>
+    <title>Bank</title>
+    <style>
+        body {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <form action = "contactform.php" method="POST" enctype="multipart/form-data">
-        <label for="fullName">Full Name</label>
-        <input type="text" name="fullName">
-        <label for="accountNumber">Account Number</label>
-        <input type="text" name="accountNumber">
-        <label for="moneyAmount">Money Amount</label>
-        <input type="text" name="moneyAmount">
-        <label for="image">Image</label>
-        <input type="file" name="image">
-        <input type="submit" value="submit" name="submit">
-    </form>
+<nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="#">
+            Bank Data
+        </a>
+        <div class="navbar-nav">
+            <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="used_data.php">Data Upload</a>
+        </div>
+    </nav>
     <?php
     $servername = "localhost";
     $username = "root";
     $password = "";
-    $newDB = "user_bank";
+    $myDB = "user_bank";
 
-    $conn = mysqli_connect($servername, $username, $password, $newDB);
-    // Check connection
+    $conn = mysqli_connect($servername, $username, $password, $myDB);
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
     }
     else {
         echo("Connected Successfully<br>");
     }
-
-if (isset($_POST['submit'])) {
-    $name = $_POST['fullName'];
-    $accNumb = $_POST['accountNumber'];
-    (float) $moners = $_POST['moneyAmount'];
-    
-    $target_dir = "upload/";
-    $targer_file = $target_dir . $_FILES["image"] ["name"];
-    $uploadOk = 1;
-    $imageFileType = strtolower(pathinfo($targer_file,PATHINFO_EXTENSION));
-    
-    if (isset($_POST["submit"])) {
-        $check = getimagesize($_FILES["image"] ["tmp_name"]);
-        if ($check !== false) {
-            echo "File is an image - " . $check["mime"] . ".";
-            $uploadOk = 1;
-        }
-        else {
-            echo "File is not an image.";
-            $uploadOk = 0;
-        }
-    }
-    if (file_exists($target_file)) {
-        echo "File already exists.";
-        $uploadOk = 0;
-    }
-    if ($_FILES["image"]["size"] > 500000000) {
-        echo "File is too big.";
-        $uploadOk = 0;
-    }
-    if($imageFileType != "jpg" && $imageFileType != "png" && $imagineFileType != "jpeg" && $imagineFileType != "gif") {
-        echo "Unaviable file type, only [JPG JPEG PNG and GIF] files are allowed";
-        $uploadOk = 0;
-    }
-    if ($uploadOk == 0) {
-        echo "Your file was not uploaded";
-    }
-    else {
-        if (move_uploaded_file($_FILES["image"] ["tmp_name"], $targer_file)) {
-            echo "File" . htmlspecialchars(basename($_FILES["image"] ["name"])). "has been uploaded";
-        }
-        else {
-            echo "Error, could not upload file";
-        }
-    }
-}
     ?>
+    <table class="table table-hover table-dark">
+    <thead>
+        <tr>
+            <th scope="col">Image</th>
+            <th scope="col">Full </th>
+            <th scope="col">Account Number</th>
+            <th scope="col">Money</th>
+            </tr>
+    </thead>
+    <tbody>
+    <?php
+    $sql = "SELECT * FROM user_info";
+    $result = mysqli_query($conn, $sql);
+    if ($result-> num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            echo "<tr>
+            <td scope='col'><img src='" . $row["IMG"] . "' width='40em' height='40em' class='rounded-circle'></td>
+            <td scope='col'>" . $row["userName"]. "</td>
+            <td scope='col'>" . $row["bankAccount"]. "</td>
+            <td scope='col'>" . $row["saldo"]. "$</td>
+            </tr>"
+            ;
+        }
+    } 
+    ?>
+    </tbody>
+    </table>
 </body>
 </html>
